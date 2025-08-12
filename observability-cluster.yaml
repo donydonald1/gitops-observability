@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: observability-sbx-wl-01
+spec:
+  destination:
+    namespace: observability-sbx-wl-01
+    server: https://kubernetes.default.svc
+  source:
+    path: observability-sbx-wl-01
+    repoURL: https://github.com/alcps/mgmtsandbox
+    targetRevision: HEAD
+  sources: []
+  project: kosmos-sbx-proj
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true

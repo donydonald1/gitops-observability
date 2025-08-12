@@ -1,0 +1,11 @@
+apiVersion: platform.kosmos.aws/v1alpha1
+kind: AwsEbsCsiDriver
+metadata:
+  name: observability-sbx-wl-01-awsebscsidriver
+spec:
+  accountId: "682033478562"
+  clusterName: observability-sbx-wl-01
+  oidcUrl: oidc.eks.us-east-2.amazonaws.com/id/2276AD601B821426D52C1B38871093AB
+  serviceAccount: "ebs-csi-controller-sa"
+  providerConfigRef:
+    name: aws-kosmos-sbx

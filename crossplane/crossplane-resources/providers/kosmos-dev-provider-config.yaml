@@ -1,0 +1,11 @@
+apiVersion: aws.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: aws-kosmos-dev
+spec:
+  credentials:
+    source: Secret
+    secretRef:
+      namespace: crossplane
+      name: aws-secret
+      key: creds

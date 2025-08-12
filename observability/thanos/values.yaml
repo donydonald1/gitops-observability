@@ -1,0 +1,46 @@
+thanos:
+  storegateway:
+    enabled: true
+    serviceAccount:
+      create: true
+      name: "thanos-storegateway"
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::682033478562:role/kosmos-observability-sbx-wl-01-s3-role
+
+  compactor:
+    enabled: true
+    retentionResolutionRaw: 30d
+    retentionResolution5m: 60d
+    retentionResolution1h: 90d
+    serviceAccount:
+      create: true
+      name: "thanos-compactor"
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::682033478562:role/kosmos-observability-sbx-wl-01-s3-role
+
+  receive:
+    enabled: true
+    tsdbRetention: 15d
+    replicaLabel: replica
+    hashPartitioning:
+      enable: false
+    serviceAccount:
+      create: true
+      name: "thanos-receiver"
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::682033478562:role/kosmos-observability-sbx-wl-01-s3-role
+    resources:
+      requests:
+        cpu: 2
+        memory: 1Gi
+      limits:
+        cpu: 3
+        memory: 1.5Gi
+
+  objstoreConfig: |
+    type: S3
+    config:
+      bucket: "kosmos-observability-sbx-wl-01"
+      endpoint: "s3.us-east-2.amazonaws.com"
+      region: "us-east-2"
+      aws_sdk_auth: true

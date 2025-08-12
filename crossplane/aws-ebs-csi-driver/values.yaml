@@ -1,0 +1,49 @@
+aws-ebs-csi-driver:
+  controller:
+    serviceAccount:
+      # A service account will be created for you if set to true. Set to false if you want to use your own.
+      create: true
+      name: ebs-csi-controller-sa
+      annotations:
+        ## Enable if EKS IAM for SA is used
+        eks.amazonaws.com/role-arn: arn:aws:iam::682033478562:role/observability-sbx-wl-01-ebs-role
+
+  node:
+    serviceAccount:
+      create: true
+      name: ebs-csi-node-sa
+      annotations:
+        ## Enable if EKS IAM for SA is used
+        eks.amazonaws.com/role-arn: arn:aws:iam::682033478562:role/observability-sbx-wl-01-ebs-role
+
+  # a1CompatibilityDaemonSet: true
+  storageClasses:
+  # Add StorageClass resources like:
+  - name: ebs-sc
+    # annotation metadata
+    annotations:
+      storageclass.kubernetes.io/is-default-class: "true"
+    # label metadata
+    labels:
+      my-label-is: supercool
+    # defaults to WaitForFirstConsumer
+    volumeBindingMode: WaitForFirstConsumer
+    # defaults to Delete
+    reclaimPolicy: Retain
+    parameters:
+      encrypted: "true"
+
+  defaultStorageClass:
+    enabled: false
+  volumeSnapshotClasses: []
+  # Add VolumeSnapshotClass resources like:
+  # - name: ebs-vsc
+  #   # annotation metadata
+  #   annotations:
+  #     snapshot.storage.kubernetes.io/is-default-class: "true"
+  #   # label metadata
+  #   labels:
+  #     my-label-is: supercool
+  #   # deletionPolicy must be specified
+  #   deletionPolicy: Delete
+  #   parameters:

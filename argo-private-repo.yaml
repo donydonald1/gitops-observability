@@ -1,0 +1,19 @@
+apiVersion: v1
+metadata:
+  labels:
+    argocd.argoproj.io/secret-type: repository
+  name: kosmos-observability
+  namespace: argocd
+type: Opaque
+stringData:
+  sshPrivateKey: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+    QyNTUxOQAAACCuUrqS4PjMmfOutAlPGUHEWwoSM7+VWWLYhUcXkJDe4QAAAKhWZNddVmTX
+    XQAAAAtzc2gtZWQyNTUxOQAAACCuUrqS4PjMmfOutAlPGUHEWwoSM7+VWWLYhUcXkJDe4Q
+    AAAEAk1Qtj8UqJYb1U9sLXTinj5evMniLY2/c+JGvXPvfAC65SupLg+MyZ8660CU8ZQcRb
+    ChIzv5VZYtiFRxeQkN7hAAAAIERvbmFsZC5FdHNlY29tQE5NU01BQy1KWFBHUEo0TVExAQ
+    IDBAU=
+    -----END OPENSSH PRIVATE KEY-----
+  url: git@github.com:alcps/kosmos-observability.git
+kind: Secret

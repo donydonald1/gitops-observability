@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- providers/kosmos-sbx-provider-config.yaml
+- providers/kosmos-dev-provider-config.yaml
+- providers/kosmos-ebs-csi-driver-claim.yaml
+# - git@github.com:alcps/kosmos-crossplane-resources.git//compositions/aws/aws-ebs-csi-driver/kosmos?ref=main
+- git@github.com:alcps/kosmos-crossplane-resources.git//compositions/aws/aws-ebs-csi-driver?ref=main
+- git@github.com:alcps/kosmos-crossplane-resources.git//providers/aws?ref=main
+- git@github.com:alcps/kosmos-crossplane-resources.git//compositions/aws/external-secrets-operator?ref=main
+- git@github.com:alcps/kosmos-crossplane-resources.git//compositions/aws/external-secrets-operator/kosmos?ref=main

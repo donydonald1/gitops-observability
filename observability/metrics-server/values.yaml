@@ -1,0 +1,6 @@
+metrics-server:
+  # hostNetwork:
+  #   enabled: true
+  # replicas: 1
+  args:
+  - --kubelet-insecure-tls

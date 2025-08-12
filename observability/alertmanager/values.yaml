@@ -1,0 +1,106 @@
+alertmanager:
+  replicaCount: 1
+
+  persistence:
+    ## If true, storage will create or use Persistence Volume
+    ## If false, storage will use emptyDir
+    ##
+    enabled: true
+
+    ## Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ## set, choosing the default provisioner.
+    ##
+    storageClass: ebs-sc
+    accessModes:
+    - ReadWriteOnce
+    size: 5Gi
+    emptyDir: {}
+  config:
+    enabled: true
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by: [ 'alertname', 'job' ]
+      group_wait: 45s
+      group_interval: 10m
+      repeat_interval: 12h
+      receiver: "msteams"
+      routes:
+      - receiver: "null" # quote
+        matchers:
+        - alertname =~ "Watchdog"
+      - receiver: "null" # quote
+        matchers:
+        - alertname =~ "InfoInhibitor"
+      - receiver: "msteams"
+        match:
+          severity: critical
+        continue: true
+      - receiver: "msteams"
+    inhibit_rules:
+    - source_matchers:
+      - severity = "critical"
+      target_matchers:
+      - severity = "warning"
+      equal: [ "alertname", "namespace" ]
+    - target_match_re:
+        alertname: '.+Overcommit'
+      source_match:
+        alertname: 'Watchdog'
+      equal: [ 'prometheus' ]
+    receivers:
+    - name: "null"
+    - name: "msteams"
+      msteams_configs:
+      - send_resolved: true
+        webhook_url: 'https://dorilton.webhook.office.com/webhookb2/1addc0a5-fcb6-4dd8-9c33-c7ab0754a210@21cbdbad-6e79-46a0-b3f3-3a7f62554acc/IncomingWebhook/1accbcbb3461441f9cd01ef1aefc489b/a6a90eee-9e69-4489-8b9c-39d505478da4/V2hagV_JYeu9QTRvmuOKYYJF8qCAZBxiLn6XhPgOiMygg1'
+        title: |-
+          🚨 [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] 
+          (Cluster: {{ .CommonLabels.cluster }})
+
+          **📢 Alert Notification - Techsecoms Monitoring**
+
+          {{ if eq .Status "firing" }}🔥 **Action Required Immediately!** 🔥{{ else }}✅ **Issue Resolved** ✅{{ end }}
+
+        text: |-
+          **🔔 Alert Details:**
+          {{ range $index, $alert := .Alerts -}}{{ if $index }}---{{ end }}
+          {{ if $alert.Labels.alertname }}
+          **🆘 Alert Name**: {{ $alert.Labels.alertname }}
+          {{ end }}
+
+          **🛑 Labels:**
+          {{ if $alert.Labels.severity }}
+          - **Severity**: {{ $alert.Labels.severity }}
+          {{ end }}
+          {{ if $alert.Labels.instance }}
+          - **Instance**: {{ $alert.Labels.instance }}
+          {{ end }}
+          {{ if $alert.Labels.namespace }}
+          - **Namespace**: {{ $alert.Labels.namespace }}
+          {{ end }}
+          {{ if $alert.Labels.pod }}
+          - **Pod**: {{ $alert.Labels.pod }}
+          {{ end }}
+
+          **📄 Annotations:**
+          {{ if $alert.Annotations.description }}
+          - **Description**: {{ $alert.Annotations.description }}
+          {{ end }}
+          {{ if $alert.Annotations.summary }}
+          - **Summary**: {{ $alert.Annotations.summary }}
+          {{ end }}
+
+          {{ if $alert.GeneratorURL }}
+          🔗 **Source**: [View in AlertManager]({{ $alert.GeneratorURL }})
+          {{ end }}
+
+          **📌 Additional Notes:**
+          - Ensure the affected service is reviewed immediately.
+          - Escalate to the **on-call team** if required.
+          - Check related metrics and logs for further debugging.
+
+          {{ end }}
